@@ -1,11 +1,17 @@
-require 'pry'
-
 class Day04
+  def self.p1
+    new.p1
+  end
+
+  def self.p2
+    new.p2
+  end
+  
   def initialize
     lines = File.read('04b.txt').split("\n")
     
     @numbers = lines.shift.split(',').map(&:to_i)
-    
+
     @boards = lines.each_slice(6).map do |board_lines|
       board_lines.shift
       Board.new(board_lines.map { |line| line.scan(/\d+/).map(&:to_i) })
@@ -19,11 +25,8 @@ class Day04
     while @boards.any? do
       num = @numbers.shift
       winners_for_round = @boards.select { |board| board.winner?(num) }
-      
-      if winners_for_round.any?
-        winning_boards += winners_for_round
-        @boards -= winners_for_round
-      end 
+      winning_boards += winners_for_round
+      @boards -= winners_for_round
     end
 
     puts num.to_i * winning_boards.last.score
@@ -42,10 +45,7 @@ class Day04
   end
 
   class Board
-    attr_reader :lines
-
     def initialize(rows)
-      @rows = rows
       @lines = rows.map { |row| Line.new(row) }
 
       5.times do |i|
