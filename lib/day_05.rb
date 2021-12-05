@@ -4,11 +4,11 @@ class Day05
   end
 
   def p2
-    puts @vents.flat_map { |vent| points_on_line(*vent) }.tally.count { |_, c| c > 1 }
+    puts @vents.flat_map { points_on_line(*_1) }.tally.count { _2 > 1 }
   end
 
   def p1
-    puts horizontal_or_vertical_vents.flat_map { |vent| points_on_line(*vent) }.tally.count { |_, c| c > 1 }
+    puts horizontal_or_vertical_vents.flat_map { points_on_line(*_1) }.tally.count { _2 > 1 }
   end
 
   def horizontal_or_vertical_vents
