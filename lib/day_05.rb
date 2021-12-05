@@ -8,8 +8,7 @@ class Day05
   end
 
   def p1
-    all_points = horizontal_or_vertical_vents.flat_map { |vent| points_on_line(*vent) }
-    puts all_points.tally.count { |_, c| c > 1 }
+    puts horizontal_or_vertical_vents.flat_map { |vent| points_on_line(*vent) }.tally.count { |_, c| c > 1 }
   end
 
   def horizontal_or_vertical_vents
@@ -17,31 +16,19 @@ class Day05
   end
 
   def points_on_line(x1, y1, x2, y2)
-    x_range  = range(x1, x2)
-    y_range  = range(y1, y2)
-    x_length = x_range.length
-    y_length = y_range.length
-
-    if x_length > y_length
-      y_range = Array.new(x_length, y_range.first)
-    elsif y_length > x_length
-      x_range = Array.new(y_length, x_range.first)
-    end
-
+    number_of_points = [(x1 - x2).abs + 1, (y1 - y2).abs + 1].max
+    x_range = range(x1, x2, number_of_points)
+    y_range = range(y1, y2, number_of_points)
     x_range.zip(y_range)
   end
 
-  def range(p1, p2)
-    return [p1] if p1 == p2
-
-    inc = p1 > p2 ? -1 : 1
-    p = p1
-    r = []
-    while r.last != p2 do
-      r << p 
-      p += inc
+  def range(p1, p2, number_of_points)
+    if p1 == p2
+      Array.new(number_of_points, p1)
+    elsif p1 > p2
+      [*p2..p1].reverse
+    else
+      [*p1..p2]
     end
-
-    r
   end
 end
