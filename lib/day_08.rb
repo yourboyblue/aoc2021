@@ -40,15 +40,15 @@ class Day08
       end
     end
 
-    # p1 is digit 7 minus digit 1 remainder
+    # p1 is 7-signal digit minus 2-signal digit remainder
     p[1] = (d3 - d2).first
 
-    # position 1 plus all of digit 4 subtracted from 6-segment digits gives position 7 when remainder is 1
+    # position 1 plus 4-signal digit subtracted from 6-signal digits gives position 7 when remainder is 1
     ptn   = [*d4, p[1]]
     sixes = patterns.select { |s| s.length == 6 }
     p[7]  = sixes.map { |s| s.chars - ptn }.find { |a| a.length == 1 }.first
 
-    # digit 8 minus ptn + p7 remainder is p5
+    # 7-signal digit minus ptn + p7 remainder is p5
     p[5] = (d7 - [*ptn, p[7]]).first
 
     ptn  = [p[1], p[5], p[7], *d2]
