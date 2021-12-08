@@ -1,11 +1,10 @@
 class Day08
   def p2
-    output = File.readlines('08.txt').map do |line|
-      signals, output = line.split('|')
-      [signals, output].map { |arr| arr.scan(/[a-z]+/) }
+    output = File.readlines("08.txt").map do |line|
+      line.split("|").map { |arr| arr.scan(/[a-z]+/) }
     end
 
-    puts output.sum { |signals, output| decode(signals, output) } 
+    puts (output.sum { |signals, output| decode(signals, output) })
   end
 
   def decode(signals, output)
@@ -21,14 +20,14 @@ class Day08
         d4 = sig.chars
       elsif sig.length == 7
         d7 = sig.chars
-      end 
+      end
     end
 
     # p1 is digit 7 minus digit 1 remainder
     p[1] = (d3 - d2).first
-    
+
     # position 1 plus all of digit 4 subtracted from 6-segment digits gives position 7 when remainder is 1
-    ptn   = [*d4,p[1]]
+    ptn   = [*d4, p[1]]
     sixes = signals.select { |s| s.length == 6 }
     p[7]  = sixes.map { |s| s.chars - ptn }.find { |a| a.length == 1 }.first
 
@@ -44,21 +43,21 @@ class Day08
     ptn   = [p[1], p[2], p[4], p[7]]
     p[6]  = fives.map { |s| s.chars - ptn }.find { |a| a.length == 1 }.first
 
-    p[3] = (d7 - [p[1],p[2],p[4],p[5],p[6],p[7]]).first
+    p[3] = (d7 - [p[1], p[2], p[4], p[5], p[6], p[7]]).first
 
     digits = output.map do |sig|
       sorted = sig.chars.sort.join
       case sorted
-      when to_re(p[3],p[6])                          then '1'
-      when to_re(p[1],p[3],p[4],p[5],p[7])           then '2'
-      when to_re(p[1],p[3],p[4],p[6],p[7])           then '3'
-      when to_re(p[2],p[3],p[4],p[6])                then '4'
-      when to_re(p[1],p[2],p[4],p[6],p[7])           then '5'
-      when to_re(p[1],p[2],p[4],p[5],p[6],p[7])      then '6'
-      when to_re(p[1],p[3],p[6])                     then '7'
-      when to_re(p[1],p[2],p[3],p[4],p[5],p[6],p[7]) then '8'
-      when to_re(p[1],p[2],p[3],p[4],p[6],p[7])      then '9'
-      when to_re(p[1],p[2],p[3],p[5],p[6],p[7])      then '0'
+      when to_re(p[3], p[6]) then "1"
+      when to_re(p[1], p[3], p[4], p[5], p[7]) then "2"
+      when to_re(p[1], p[3], p[4], p[6], p[7]) then "3"
+      when to_re(p[2], p[3], p[4], p[6]) then "4"
+      when to_re(p[1], p[2], p[4], p[6], p[7]) then "5"
+      when to_re(p[1], p[2], p[4], p[5], p[6], p[7]) then "6"
+      when to_re(p[1], p[3], p[6]) then "7"
+      when to_re(p[1], p[2], p[3], p[4], p[5], p[6], p[7]) then "8"
+      when to_re(p[1], p[2], p[3], p[4], p[6], p[7]) then "9"
+      when to_re(p[1], p[2], p[3], p[5], p[6], p[7]) then "0"
       end
     end
 
@@ -70,13 +69,13 @@ class Day08
   end
 
   def p1
-    output = File.readlines('08.txt').flat_map do |line|
-      line.split('|').last.scan(/[a-z]+/)
+    output = File.readlines("08.txt").flat_map do |line|
+      line.split("|").last.scan(/[a-z]+/)
     end
 
     output.count do |digit|
       case digit.length
-      when 2,3,4,7 then true
+      when 2, 3, 4, 7 then true
       else false
       end
     end
