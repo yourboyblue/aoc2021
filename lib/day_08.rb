@@ -3,7 +3,7 @@
 class Day08
   def p2
     output = File.readlines("08.txt").map do |line|
-      line.split("|").map { |arr| arr.scan(/[a-z]+/) }
+      line.split("|").map { |sig| sig.scan(/[a-z]+/) }
     end
 
     puts (output.sum { |signals, output| decode(signals, output) })
@@ -75,11 +75,13 @@ class Day08
       line.split("|").last.scan(/[a-z]+/)
     end
 
-    output.count do |digit|
+    count = output.count do |digit|
       case digit.length
       when 2, 3, 4, 7 then true
       else false
       end
     end
+
+    puts count
   end
 end
