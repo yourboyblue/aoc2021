@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Day08
   def p2
     output = File.readlines("08.txt").map do |line|
