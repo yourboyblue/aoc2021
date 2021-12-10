@@ -1,4 +1,3 @@
-require 'pry'
 class Day10
   def initialize
     @lines = File.read("10.txt").split("\n").map { |l| Line.new(l.chars) }
@@ -54,15 +53,15 @@ class Day10
     def score_incomplete
       return unless @open.any? && !@invalid
 
-      @open.reverse.reduce(0) { |sum, char| sum * 5 + score_incomplete_char(char) }
+      @open.reverse.reduce(0) { |sum, char| sum * 5 + score_end_match(char) }
     end
 
-    def score_incomplete_char(char)
+    def score_end_match(char)
       case PAIRS[char]
-      when')' then 1
-      when']' then 2
-      when'}' then 3
-      when'>' then 4
+      when ')' then 1
+      when ']' then 2
+      when '}' then 3
+      when '>' then 4
       end
     end
   end
