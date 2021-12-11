@@ -52,7 +52,22 @@ class Grid
     end
   end
 
+  # @example default with no transformation
+  #   grid.print
+  #
+  # @example with transformed values
+  #   grid.print { |n| n.to_s.rjust(2, " ") }
   def print
-    puts @grid.map { |row| row.map { |n| (n == 10 ? "0" : n.to_s).rjust(2, " ") }.join }.join("\n")
+    p = @grid.map do |row| 
+      row.map do |val| 
+        if block_given?
+          yield val
+        else
+          val
+        end
+      end.join
+    end.join("\n")
+
+    puts p
   end
 end
