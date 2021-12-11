@@ -29,7 +29,7 @@ class Day09
 
     puts three_largest_basins.reduce(:*)
   end
-
+  
   def adj(x, y)
     [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].reject do |x1, y1|
       x1.negative? || y1.negative? || x1 >= @w || y1 >= @h
