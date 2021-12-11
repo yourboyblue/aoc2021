@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Grid
   include Enumerable
 
@@ -30,18 +32,20 @@ class Grid
 
   def adj(x, y)
     pts = [
-      [x + 1, y], 
+      [x + 1, y],
       [x, y - 1],
       [x, y + 1],
-      [x - 1, y], 
+      [x - 1, y]
     ]
 
-    pts += [
-      [x + 1, y + 1], 
-      [x + 1, y - 1], 
-      [x - 1, y + 1], 
-      [x - 1, y - 1], 
-    ] if @diagonals_adjacent
+    if @diagonals_adjacent
+      pts += [
+        [x + 1, y + 1],
+        [x + 1, y - 1],
+        [x - 1, y + 1],
+        [x - 1, y - 1]
+      ]
+    end
 
     pts.reject do |x1, y1|
       x1.negative? || y1.negative? || x1 >= @w || y1 >= @h
@@ -49,6 +53,6 @@ class Grid
   end
 
   def print
-    puts @grid.map { |row| row.map { |n| (n == 10 ? '0' : n.to_s).rjust(2,' ') }.join }.join("\n")
+    puts @grid.map { |row| row.map { |n| (n == 10 ? "0" : n.to_s).rjust(2, " ") }.join }.join("\n")
   end
 end
