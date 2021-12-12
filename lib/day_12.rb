@@ -28,7 +28,7 @@ class Day12
     while exploring.any?
       new_paths = []
       exploring.each do |p|
-        p.last.connections.each do |cave|
+        p.next_caves.each do |cave|
           next if p.invalid?(cave, double_small_allowed: double_small_allowed)
 
           new_path = p.dup << cave
@@ -73,12 +73,12 @@ class Day12
       self
     end
 
-    def last
-      @caves.last
+    def next_caves
+      @caves.last.connections
     end
 
     def end?
-      last.end?
+      @caves.last.end?
     end
 
     def length
