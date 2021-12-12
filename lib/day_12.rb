@@ -2,71 +2,59 @@
 
 class Day12
   def initialize
-    edges = File.read("12.txt").split("\n").map { |line| line.split('-')}
     @caves = {}
-    edges.each do |c1, c2|
+    File.read("12.txt").split("\n").map { |line| line.split("-") }.each do |c1, c2|
       cave1 = (@caves[c1] ||= Cave.new(c1))
       cave2 = (@caves[c2] ||= Cave.new(c2))
       cave1 << cave2
       cave2 << cave1
     end
-    @paths = []
-  end
-
-  def self.p1
-    new.p1
-  end
-
-  def self.p2
-    new.p2
   end
 
   def p1
-    trace(double_small_allowed: false)
-    puts "P1: #{@paths.length}"
+    paths = trace(double_small_allowed: false)
+    puts "P1: #{paths.length}"
   end
 
   def p2
-    trace(double_small_allowed: true)
-    puts "P2: #{@paths.length}"
+    paths = trace(double_small_allowed: true)
+    puts "P2: #{paths.length}"
   end
 
   def trace(double_small_allowed:)
-    start = @caves['start']
-    start_path = Path.new
-    start_path << start
-    @paths << start_path
+    exploring = [Path.new << @caves["start"]]
+    completed = []
 
-    while !@paths.all?(&:end?)
+    while exploring.any?
       new_paths = []
-      @paths.each do |p|
-        if p.end?
-          new_paths << p
-          next
-        end
-
-        connections = p.last.connections
-        connections.each do |cave|
+      exploring.each do |p|
+        p.last.connections.each do |cave|
           next if p.invalid?(cave, double_small_allowed: double_small_allowed)
-          new_path = p.dup
-          new_path << cave
-          new_paths << new_path
+
+          new_path = p.dup << cave
+          if new_path.end?
+            completed << new_path
+          else
+            new_paths << new_path
+          end
         end
       end
-      @paths = new_paths
+      exploring = new_paths
     end
+
+    completed
   end
 
   class Path
-    def initialize(p = [], visited = [], double_small = false)
+    def initialize(caves = [], visited = [], double_small: false)
       @visited = Set[*visited]
-      @p = [*p]
+      @caves = [*caves]
       @double_small = double_small
     end
 
     def dup
-      self.class.new(@p, @visited, @double_small)
-    end  
+      self.class.new(@caves, @visited, double_small: @double_small)
+    end
 
     def invalid?(cave, double_small_allowed: false)
       return false unless cave.small?
@@ -74,23 +62,19 @@ class Day12
       return true if cave.start?
       return true unless double_small_allowed
 
-      double_small?
+      @double_small
     end
 
     def <<(cave)
-      @p << cave
+      @caves << cave
       @double_small = true if cave.small? && @visited.include?(cave)
-        
+
       @visited << cave
       self
     end
 
-    def double_small?
-      @double_small
-    end
-
     def last
-      @p.last
+      @caves.last
     end
 
     def end?
@@ -98,11 +82,11 @@ class Day12
     end
 
     def length
-      @p.length
+      @caves.length
     end
 
     def to_s
-      @p.map(&:name).join('->')
+      @caves.map(&:name).join("->")
     end
   end
 
@@ -112,34 +96,27 @@ class Day12
       @connections = []
     end
 
-    attr_reader :name
-
-    def big?
-      @name.match?(/^[A-Z]/)
-    end
+    attr_reader :name, :connections
 
     def small?
-      !big?
+      @name.match?(/^[a-z]/)
     end
 
     def end?
-      @name == 'end'
+      @name == "end"
     end
 
     def start?
-      @name == 'start'
+      @name == "start"
     end
 
     def <<(child)
       @connections << child
       self
     end
-
-    def connections
-      @connections
-    end
   end
 end
 
-Day12.p1
-Day12.p2
+d = Day12.new
+d.p1
+d.p2
