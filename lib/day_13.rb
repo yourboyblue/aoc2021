@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Day13
   def initialize
     lines = File.read("13.txt").split("\n")
@@ -5,13 +7,13 @@ class Day13
     @coords = []
     @folds  = []
     lines.each do |line|
-      next if line == ''
+      next if line == ""
+
       if line.match?(/^fold/)
         md = line.match(/([xy])=(\d+)/)
         @folds << [md[1], md[2].to_i]
       else
-        c = line.scan(/\d+/).map(&:to_i)
-        @coords << c
+        @coords << line.scan(/\d+/).map(&:to_i)
       end
     end
   end
@@ -32,8 +34,8 @@ class Day13
   end
 
   def fold(coords, orientation, location)
-    if orientation == 'y'
-      below, above = coords.partition {|x,y| y > location }.map(&:to_set)
+    if orientation == "y"
+      below, above = coords.partition { |_x, y| y > location }.map(&:to_set)
 
       below.each do |x, y|
         y1 = location - (y - location)
@@ -42,7 +44,7 @@ class Day13
 
       above
     else
-      right, left = coords.partition {|x,y| x > location }.map(&:to_set)
+      right, left = coords.partition { |x, _y| x > location }.map(&:to_set)
       right.each do |x, y|
         x1 = location - (x - location)
         left << [x1, y]
@@ -53,13 +55,13 @@ class Day13
   end
 
   def print_grid(coords)
-    mx = coords.map(&:first).max + 1
-    my = coords.map(&:last  ).max + 1
+    mx = coords.max_by(&:first) + 1
+    my = coords.max_by(&:last) + 1
 
     my.times do |y|
       mx.times do |x|
-        p = coords.include?([x,y]) ? '#' : '.'
-        print p.rjust(2, ' ')
+        p = coords.include?([x, y]) ? "#" : "."
+        print p.rjust(2, " ")
       end
       puts
     end
