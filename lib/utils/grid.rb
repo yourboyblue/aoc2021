@@ -10,16 +10,23 @@ class Grid
     @diagonals_adjacent = diagonals_adjacent
   end
 
+  attr_reader :w, :h
+
   def val(x, y)
     @grid[y][x]
   end
 
   def set(x, y, v)
+    @w = x + 1 if x >= @w
     @grid[y][x] = v
   end
 
   def length
     @grid.sum(&:length)
+  end
+
+  def manhattan(x, y, x1, y1)
+    (x - x1).abs + (y - y1).abs
   end
 
   def each
@@ -28,6 +35,37 @@ class Grid
         yield [x, y]
       end
     end
+  end
+
+  def dup
+    g = Array.new(@h, [])
+    each_with_value do |_x, y, v|
+      g[y] << v
+    end
+    self.class.new(g)
+  end
+
+  def add_rows(n)
+    n.times do
+      @grid[@h] = []
+      @h += 1
+    end
+  end
+
+  def each_with_value
+    @grid.each.with_index do |row, y|
+      row.length.times do |x|
+        yield [x, y, val(x, y)]
+      end
+    end
+  end
+
+  def first
+    [0, 0]
+  end
+
+  def last
+    [@w - 1, @h - 1]
   end
 
   def adj(x, y)
@@ -58,8 +96,8 @@ class Grid
   # @example with transformed values
   #   grid.print { |n| n.to_s.rjust(2, " ") }
   def print
-    p = @grid.map do |row| 
-      row.map do |val| 
+    p = @grid.map do |row|
+      row.map do |val|
         if block_given?
           yield val
         else
