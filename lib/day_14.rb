@@ -3,30 +3,29 @@
 class Day14
   def self.expand(iterations)
     poly, _, *rest = File.read("14.txt").split("\n")
-    rules = rest.map { _1.split(" -> ") }.to_h
+    inserts = rest.map { _1.split(" -> ") }.to_h
 
     # count starting atoms and pairs
     atoms = poly.chars.tally
     pairs = poly.chars.each_cons(2).map { _1.join }.tally
 
-    iterations.times do |_i|
+    iterations.times do
       new_pairs = Hash.new { |h, k| h[k] = 0 }
       pairs.each do |pair, count|
         # each pair expands into two new pairs
         a, b = pair.chars
-        m = rules[pair]
-        ["#{a}#{m}", "#{m}#{b}"].each { |p| new_pairs[p] += count }
+        m = inserts[pair]
+        ["#{a}#{m}", "#{m}#{b}"].each { new_pairs[_1] += count }
 
         # each pair adds a new atom to the poly
-        atoms[rules[pair]] ||= 0
-        atoms[rules[pair]] += count
+        atoms[inserts[pair]] ||= 0
+        atoms[inserts[pair]] += count
       end
       pairs = new_pairs
     end
 
-    max = atoms.max_by { |_, v| v }.last
-    min = atoms.min_by { |_, v| v }.last
-    puts max - min
+    v = atoms.values
+    puts v.max - v.min
   end
 end
 
