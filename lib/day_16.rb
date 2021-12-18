@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Day16
-  class EndOfPacket < StandardError; end
+  class IncompletePacket < StandardError; end
 
   MAP = {
     "0" => "0000",
@@ -24,7 +24,7 @@ class Day16
 
   def initialize
     @hex = File.read("16.txt").chomp.chars
-    @bin = ""
+    @bin = String.new
     @ptr = 0
 
     @packets = []
@@ -81,7 +81,7 @@ class Day16
   def read(n)
     decode while unread < n
 
-    str = ""
+    str = String.new
     n.times do
       str << @bin[@ptr]
       @ptr += 1
