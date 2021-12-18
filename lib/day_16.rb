@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class Day16
   class EndOfPacket < StandardError; end
-  
+
   MAP = {
     "0" => "0000",
     "1" => "0001",
@@ -18,11 +20,11 @@ class Day16
     "D" => "1101",
     "E" => "1110",
     "F" => "1111"
-  }
+  }.freeze
 
   def initialize
-    @hex = File.read('16.txt').chomp.chars
-    @bin = ''
+    @hex = File.read("16.txt").chomp.chars
+    @bin = ""
     @ptr = 0
 
     @packets = []
@@ -41,7 +43,7 @@ class Day16
 
   def read_packets
     loop do
-      # squish subpackets 
+      # squish subpackets
       while @packets.last&.subpackets_found? && @packets.length > 1
         last = @packets.pop
         last.calculate_value
@@ -49,29 +51,27 @@ class Day16
         if @packets.any?
           @packets.last.add_subpacket(last)
         else
-          @packets << last 
+          @packets << last
         end
       end
 
       version = read(3).to_i(2)
       # sum the solution for P1
-      @sum_versions += version 
+      @sum_versions += version
 
       type = read(3).to_i(2)
-      
+
       packet =
         if type == 4
           Packet.new(version, type, nil, 1).tap do |p|
-            while !p.subpackets_found? do
-              p.add_subpacket(read(5))
-            end
+            p.add_subpacket(read(5)) until p.subpackets_found?
           end
         else
-          mode = (read(1).to_i(2) == 0 ? :length : :count)
+          mode = (read(1).to_i(2).zero? ? :length : :count)
           remaining = mode == :length ? read(15) : read(11)
           Packet.new(version, type, mode, remaining.to_i(2))
         end
-      
+
       @packets << packet
     rescue IncompletePacket
       break
@@ -79,12 +79,10 @@ class Day16
   end
 
   def read(n)
-    while unread < n do 
-      decode
-    end
+    decode while unread < n
 
-    str = ''
-    n.times do 
+    str = ""
+    n.times do
       str << @bin[@ptr]
       @ptr += 1
     end
@@ -114,19 +112,19 @@ class Day16
 
     def initial_length
       return 6 if @type == 4
-      
+
       @mode == :length ? 22 : 18
     end
 
     def subpackets_found?
-      @remaining == 0
+      @remaining.zero?
     end
 
     def add_subpacket(packet)
       @subpackets << packet
       @length += packet.length
       if @type == 4
-        @remaining -= 1 if packet.start_with?('0')
+        @remaining -= 1 if packet.start_with?("0")
       elsif @mode == :length
         @remaining -= packet.length
       elsif @mode == :count
@@ -137,11 +135,11 @@ class Day16
     def calculate_value
       subpacket_values = @type == 4 ? @subpackets : @subpackets.map(&:value)
 
-      @value = 
+      @value =
         case @type
         when 0
           subpacket_values.sum
-        when 1 
+        when 1
           subpacket_values.reduce(:*)
         when 2
           subpacket_values.min
@@ -162,4 +160,3 @@ end
 
 Day16.new.p1
 Day16.new.p2
-
